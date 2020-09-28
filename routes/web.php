@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfessorController;
+use App\Http\Controllers\TitulacaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,8 @@ use App\Http\Controllers\ProfessorController;
 */
 
 Route::resources([
-	"professor" => ProfessorController::class
+	"professor" => ProfessorController::class,
+	"titulacao" => TitulacaoController::class
 ]);
 
 Route::get('/', function () {

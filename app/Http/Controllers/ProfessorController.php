@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Professor;
+use App\Models\Titulacao;
 
 class ProfessorController extends Controller
 {
@@ -15,21 +17,19 @@ class ProfessorController extends Controller
     public function index()
     {
 		$professor = new Professor();
-		$professores = Professor::All();
+		
+		$professores = DB::table("professor AS p")
+						->join("titulacao AS t", "p.titulacao", "=", "t.id")
+						->select("p.id", "p.nome", "p.email", "p.matricula", "t.nome AS titulacao")
+						->get();
+						
+		$titulacoes = Titulacao::All();
+		
         return view("professor.index", [
 			"professor" => $professor,
-			"professores" => $professores
+			"professores" => $professores,
+			"titulacoes" => $titulacoes
 		]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -45,22 +45,16 @@ class ProfessorController extends Controller
 		} else {
 			$professor = Professor::find($request->get("id"));
 		}
+		
 		$professor->nome = $request->get("nome");
 		$professor->email = $request->get("email");
 		$professor->matricula = $request->get("matricula");
+		$professor->titulacao = $request->get("titulacao");
 		$professor->save();
+		
+		$request->session()->flash("salvar", "Professor salvo com sucesso!");
+		
 		return redirect("/professor");
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        
     }
 
     /**
@@ -71,24 +65,20 @@ class ProfessorController extends Controller
      */
     public function edit($id)
     {
-        $professores = Professor::All();
+        $professores = DB::table("professor AS p")
+						->join("titulacao AS t", "p.titulacao", "=", "t.id")
+						->select("p.id", "p.nome", "p.email", "p.matricula", "t.nome AS titulacao")
+						->get();
+		
 		$professor = Professor::find($id);
+		
+		$titulacoes = Titulacao::All();
+		
 		return view("professor.index", [
 			"professor" => $professor,
-			"professores" => $professores
+			"professores" => $professores,
+			"titulacoes" => $titulacoes
 		]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
@@ -97,9 +87,10 @@ class ProfessorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         Professor::destroy($id);
+		$request->session()->flash("excluir", "Professor excluído com sucesso!");
 		return redirect("/professor");
     }
 }
