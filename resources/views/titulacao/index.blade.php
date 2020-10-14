@@ -6,7 +6,7 @@
 	<form action="/titulacao" method="POST" class="row">
 		<div class="form-group col-6">
 			<label>Nome:</label>
-			<input type="text" name="nome" value="{{ $titulacao->nome }}" class="form-control" />
+			<input type="text" name="nome" value="{{ $titulacao->nome }}" class="form-control" required />
 		</div>
 		<div class="form-group col-6">
 			@csrf
@@ -40,13 +40,17 @@
 						</a>
 					</td>
 					<td>
-						<form action="/titulacao/{{ $titulacao->id }}" method="POST">
-							@csrf
-							<input type="hidden" name="_method" value="delete" />
-							<button class="btn btn-danger" type="submit" onclick="return confirm('Deseja realmente excluir?');">
-								<i class="fa fa-trash"></i> Excluir
-							</button>
-						</form>
+						@if ($titulacao->qtd_professores == 0) 
+							<form action="/titulacao/{{ $titulacao->id }}" method="POST">
+								@csrf
+								<input type="hidden" name="_method" value="delete" />
+								<button class="btn btn-danger" type="submit" onclick="return confirm('Deseja realmente excluir?');">
+									<i class="fa fa-trash"></i> Excluir
+								</button>
+							</form>
+						@else
+							Professor vinculado à essa titulação
+						@endif
 					</td>
 				</tr>
 			@endforeach

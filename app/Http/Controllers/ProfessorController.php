@@ -20,7 +20,7 @@ class ProfessorController extends Controller
 		
 		$professores = DB::table("professor AS p")
 						->join("titulacao AS t", "p.titulacao", "=", "t.id")
-						->select("p.id", "p.nome", "p.email", "p.matricula", "t.nome AS titulacao")
+						->select("p.id", "p.nome", "p.email", "p.matricula", "p.foto", "t.nome AS titulacao")
 						->get();
 						
 		$titulacoes = Titulacao::All();
@@ -40,10 +40,27 @@ class ProfessorController extends Controller
      */
     public function store(Request $request)
     {
+		
+		$validacao = $request->validate([
+			"nome" => "required",
+			"email" => "required|email",
+			"matricula" => "required|numeric",
+			"titulacao" => "required",
+			"foto" => "image"
+		], [
+			"*.required" => "O [:attribute] deve ser obrigatório.",
+			"foto.image" => "Deve ser salva uma imagem"
+		]);
+		
 		if ($request->get("id") == "") {
 			$professor = new Professor();
 		} else {
 			$professor = Professor::find($request->get("id"));
+		}
+
+		if ($request->file("foto") != "") {
+			$professor->foto = $request->file("foto")->store("public");
+			$professor->foto = explode("/", $professor->foto)[1];
 		}
 		
 		$professor->nome = $request->get("nome");
@@ -67,7 +84,7 @@ class ProfessorController extends Controller
     {
         $professores = DB::table("professor AS p")
 						->join("titulacao AS t", "p.titulacao", "=", "t.id")
-						->select("p.id", "p.nome", "p.email", "p.matricula", "t.nome AS titulacao")
+						->select("p.id", "p.nome", "p.email", "p.matricula", "p.foto", "t.nome AS titulacao")
 						->get();
 		
 		$professor = Professor::find($id);

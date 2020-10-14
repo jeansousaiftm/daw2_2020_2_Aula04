@@ -26,15 +26,36 @@
 				{{ Session::get("excluir") }}
 			</div>
 		@endif
-		<div class="container">
-			<h1>Cadastro - @yield("nome_tela")</h1>
-			<div class="cadastro">
-				@yield("cadastro")
+		@if ($errors->any())
+			<div class="alert alert-danger">
+				<ul>
+					@foreach ($errors->all() as $e)
+						<li>{{ $e }}</li>
+					@endforeach
+				</ul>
 			</div>
-			<h1>Listagem - @yield("nome_tela")</h1>
-			<div class="listagem">
-				@yield("listagem")
+		@endif
+		
+		@if (!request()->is("/"))
+			<div class="container">
+				<h1>Cadastro - @yield("nome_tela")</h1>
+				<div class="cadastro">
+					@yield("cadastro")
+				</div>
+				<h1>Listagem - @yield("nome_tela")</h1>
+				<div class="listagem">
+					@yield("listagem")
+				</div>
 			</div>
-		</div>
+		@else
+			<div class="container" style="text-align: center;">
+				<br/>
+				<br/>
+				<br/>
+				<h1>Cadastro Acadêmico</h1>
+				<!--<img src="{{ asset('storage/teste/user.jpg') }}" />-->
+			</div>
+		@endif
+
 	</body>
 </html>

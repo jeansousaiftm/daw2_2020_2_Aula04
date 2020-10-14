@@ -3,22 +3,26 @@
 @section("nome_tela", "Professor")
 
 @section("cadastro")
-	<form action="/professor" method="POST" class="row">
-		<div class="form-group col-6">
+	<form action="/professor" method="POST" class="row" enctype="multipart/form-data">
+		<div class="form-group col-4">
 			<label>Nome:</label>
-			<input type="text" name="nome" value="{{ $professor->nome }}" class="form-control" />
+			<input type="text" name="nome" value="{{ $professor->nome }}" class="form-control" required />
 		</div>
-		<div class="form-group col-6">
+		<div class="form-group col-4">
 			<label>E-mail:</label>
-			<input type="email" name="email" value="{{ $professor->email }}" class="form-control" />
+			<input type="email" name="email" value="{{ $professor->email }}" class="form-control" required />
+		</div>
+		<div class="form-group col-4">
+			<label>Foto:</label>
+			<input type="file" name="foto" class="form-control" />
 		</div>
 		<div class="form-group col-4">
 			<label>Matrícula:</label>
-			<input type="number" name="matricula" value="{{ $professor->matricula }}" class="form-control" />
+			<input type="number" name="matricula" value="{{ $professor->matricula }}" class="form-control" required />
 		</div>
 		<div class="form-group col-4">
 			<label>Titulação:</label>
-			<select name="titulacao" class="form-control">
+			<select name="titulacao" class="form-control" required>
 				<option value=""></option>
 				@foreach ($titulacoes as $titulacao)
 					@if ($titulacao->id == $professor->titulacao)
@@ -61,6 +65,13 @@
 					<td>{{ $professor->email }}</td>
 					<td>{{ $professor->matricula }}</td>
 					<td>{{ $professor->titulacao }}</td>
+					<td>
+						@if ($professor->foto != "")
+							<img src="{{ asset('storage/' . $professor->foto) }}" width="100" />
+						@else
+							Sem foto!
+						@endif
+					</td>
 					<td>
 						<a href="/professor/{{ $professor->id }}/edit" class="btn btn-warning">
 							<i class="fa fa-edit"></i> Editar

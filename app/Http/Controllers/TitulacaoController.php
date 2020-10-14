@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Titulacao;
 
 class TitulacaoController extends Controller
@@ -15,7 +16,11 @@ class TitulacaoController extends Controller
     public function index()
     {
         $titulacao = new Titulacao();
-		$titulacoes = Titulacao::All();
+		$titulacoes = DB::table("titulacao AS t")
+						->leftJoin("professor AS p", "t.id", "=", "p.titulacao")
+						->groupBy("t.id", "t.nome")
+						->select("t.id", "t.nome", DB::raw("COUNT(p.id) AS qtd_professores"))
+						->get();
 		return view("titulacao.index", [
 			"titulacao" => $titulacao,
 			"titulacoes" => $titulacoes
@@ -30,6 +35,12 @@ class TitulacaoController extends Controller
      */
     public function store(Request $request)
     {
+		$validacao = $request->validate([
+			"titulacao" => "required"
+		], [
+			"*.required" => "O [:attribute] deve ser obrigatório."
+		]);
+		
         if ($request->get("id") == "") {
 			$titulacao = new Titulacao();
 		} else {
@@ -53,7 +64,11 @@ class TitulacaoController extends Controller
     public function edit($id)
     {
         $titulacao = Titulacao::find($id);
-		$titulacoes = Titulacao::All();
+		$titulacoes = DB::table("titulacao AS t")
+						->leftJoin("professor AS p", "t.id", "=", "p.titulacao")
+						->groupBy("t.id", "t.nome")
+						->select("t.id", "t.nome", DB::raw("COUNT(p.id) AS qtd_professores"))
+						->get();
 		return view("titulacao.index", [
 			"titulacao" => $titulacao,
 			"titulacoes" => $titulacoes
