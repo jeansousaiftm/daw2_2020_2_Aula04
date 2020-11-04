@@ -36,7 +36,7 @@ class TitulacaoController extends Controller
     public function store(Request $request)
     {
 		$validacao = $request->validate([
-			"titulacao" => "required"
+			"nome" => "required"
 		], [
 			"*.required" => "O [:attribute] deve ser obrigatório."
 		]);

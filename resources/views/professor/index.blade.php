@@ -4,23 +4,19 @@
 
 @section("cadastro")
 	<form action="/professor" method="POST" class="row" enctype="multipart/form-data">
-		<div class="form-group col-4">
+		<div class="form-group col-3">
 			<label>Nome:</label>
 			<input type="text" name="nome" value="{{ $professor->nome }}" class="form-control" required />
 		</div>
-		<div class="form-group col-4">
+		<div class="form-group col-3">
 			<label>E-mail:</label>
 			<input type="email" name="email" value="{{ $professor->email }}" class="form-control" required />
 		</div>
-		<div class="form-group col-4">
-			<label>Foto:</label>
-			<input type="file" name="foto" class="form-control" />
-		</div>
-		<div class="form-group col-4">
+		<div class="form-group col-3">
 			<label>Matrícula:</label>
 			<input type="number" name="matricula" value="{{ $professor->matricula }}" class="form-control" required />
 		</div>
-		<div class="form-group col-4">
+		<div class="form-group col-3">
 			<label>Titulação:</label>
 			<select name="titulacao" class="form-control" required>
 				<option value=""></option>
@@ -34,6 +30,22 @@
 			</select>
 		</div>
 		<div class="form-group col-4">
+			<label>Disciplinas:</label>
+			<select id="disciplina" name="disciplina[]" class="form-control" required multiple>
+				@foreach ($disciplinas as $disciplina)
+					@if ($professor->listaDisciplinas()->where("id", $disciplina->id)->count() > 0)
+						<option value="{{ $disciplina->id }}" selected="selected">{{ $disciplina->nome }}</option>
+					@else
+						<option value="{{ $disciplina->id }}">{{ $disciplina->nome }}</option>
+					@endif
+				@endforeach
+			</select>
+		</div>
+		<div class="form-group col-5">
+			<label>Foto:</label>
+			<input type="file" name="foto" class="form-control" />
+		</div>
+		<div class="form-group col-3">
 			@csrf
 			<input type="hidden" name="id" value="{{ $professor->id }}" />
 			<button class="btn btn-success bottom" type="submit">
@@ -44,6 +56,12 @@
 			</a>
 		</div>
 	</form>
+	
+	<script>
+		$(document).ready(function() {
+			$("#disciplina").selectpicker("refresh")
+		});
+	</script>
 @endsection
 
 @section("listagem")
@@ -54,6 +72,7 @@
 				<th>E-mail</th>
 				<th>Matrícula</th>
 				<th>Titulação</th>
+				<th>Disciplinas</th>
 				<th>Editar</th>
 				<th>Excluir</th>
 			</tr>
@@ -64,7 +83,14 @@
 					<td>{{ $professor->nome }}</td>
 					<td>{{ $professor->email }}</td>
 					<td>{{ $professor->matricula }}</td>
-					<td>{{ $professor->titulacao }}</td>
+					<td>{{ $professor->objTitulacao->nome }}</td>
+					<td>
+						<ul>
+							@foreach ($professor->listaDisciplinas as $disciplina)
+								<li>{{ $disciplina->nome }}</li>
+							@endforeach
+						</ul>
+					</td>
 					<td>
 						@if ($professor->foto != "")
 							<img src="{{ asset('storage/' . $professor->foto) }}" width="100" />

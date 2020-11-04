@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Professor;
+use App\Models\Disciplina;
 use App\Models\Titulacao;
 
 class ProfessorController extends Controller
@@ -18,17 +19,17 @@ class ProfessorController extends Controller
     {
 		$professor = new Professor();
 		
-		$professores = DB::table("professor AS p")
-						->join("titulacao AS t", "p.titulacao", "=", "t.id")
-						->select("p.id", "p.nome", "p.email", "p.matricula", "p.foto", "t.nome AS titulacao")
-						->get();
+		$professores = Professor::All();
 						
 		$titulacoes = Titulacao::All();
+		
+		$disciplinas = Disciplina::All();
 		
         return view("professor.index", [
 			"professor" => $professor,
 			"professores" => $professores,
-			"titulacoes" => $titulacoes
+			"titulacoes" => $titulacoes,
+			"disciplinas" => $disciplinas
 		]);
     }
 
@@ -69,6 +70,12 @@ class ProfessorController extends Controller
 		$professor->titulacao = $request->get("titulacao");
 		$professor->save();
 		
+		$professor->listaDisciplinas()->detach();
+		
+		foreach ($request->get("disciplina") as $disciplina) {
+			$professor->listaDisciplinas()->attach($disciplina);
+		}
+		
 		$request->session()->flash("salvar", "Professor salvo com sucesso!");
 		
 		return redirect("/professor");
@@ -82,19 +89,19 @@ class ProfessorController extends Controller
      */
     public function edit($id)
     {
-        $professores = DB::table("professor AS p")
-						->join("titulacao AS t", "p.titulacao", "=", "t.id")
-						->select("p.id", "p.nome", "p.email", "p.matricula", "p.foto", "t.nome AS titulacao")
-						->get();
+        $professores = Professor::All();
 		
 		$professor = Professor::find($id);
 		
 		$titulacoes = Titulacao::All();
 		
-		return view("professor.index", [
+		$disciplinas = Disciplina::All();
+		
+        return view("professor.index", [
 			"professor" => $professor,
 			"professores" => $professores,
-			"titulacoes" => $titulacoes
+			"titulacoes" => $titulacoes,
+			"disciplinas" => $disciplinas
 		]);
     }
 
@@ -106,6 +113,8 @@ class ProfessorController extends Controller
      */
     public function destroy(Request $request, $id)
     {
+		$professor = Professor::Find($id);
+		$professor->listaDisciplinas()->detach();
         Professor::destroy($id);
 		$request->session()->flash("excluir", "Professor excluído com sucesso!");
 		return redirect("/professor");

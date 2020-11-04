@@ -5,8 +5,10 @@
 		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" />
 		<link rel="stylesheet" href="{{ asset('css/fa.css') }}" />
 		<link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
+		<link rel="stylesheet" href="{{ asset('css/bootstrap-select.css') }}" />
 		<script src="{{ asset('js/jquery.js') }}"></script>
-		<script src="{{ asset('js/bootstrap.js') }}"></script>
+		<script src="{{ asset('js/bootstrap.bundle.js') }}"></script>
+		<script src="{{ asset('js/bootstrap-select.js') }}"></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-sm bg-light navbar-light">
@@ -14,6 +16,7 @@
 				<li class="nav-item"><a class="nav-link" href="/"><b>Home</b></a></li>
 				<li class="nav-item"><a class="nav-link" href="/professor">Professor</a></li>
 				<li class="nav-item"><a class="nav-link" href="/titulacao">Titulação</a></li>
+				<li class="nav-item"><a class="nav-link" href="/disciplina">Disciplina</a></li>
 			</ul>
 		</nav>
 		@if (Session::has("salvar"))
